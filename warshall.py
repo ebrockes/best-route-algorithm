@@ -81,8 +81,27 @@ def floyd_warshall(g):
                 if distance[v][w] > distance[v][p] + distance[p][w]:
                     distance[v][w] = distance[v][p] + distance[p][w]
                     next_v[v][w] = next_v[v][p]
- 
     return distance, next_v
+    
+def print_path(next_v, u, v, INICIO):
+    """Print shortest path from vertex u to v.
+ 
+    next_v is a dictionary where next_v[u][v] is the next vertex after vertex u
+    in the shortest path from u to v. It is None if there is no path between
+    them. next_v[u][u] should be None for all u.
+ 
+    u and v are Vertex objects.
+    """
+    p = u
+    print('{} -> '.format(INICIO), end='')
+    while (next_v[p][v]):
+        print('{} -> '.format(p.get_key()), end='')
+        p = next_v[p][v]
+    print('{} '.format(v.get_key()), end='')
+
+print("Distance between 1 and 3: ")
+INICIO = 1
+FIM = 3
 
 matrix = """
 [
@@ -120,6 +139,7 @@ matrix = """
 
 g = Graph()
 x = json.loads(matrix, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+key1 = key2 = key3 = None
 for i in x:
     key1 = int(i.inicio)
     key2 = int(i.fim)
@@ -130,13 +150,16 @@ for i in x:
         g.add_vertex(key2)
     if not g.does_edge_exist(key1, key2):
         g.add_edge(key1, key2, key3)
- 
+    
 distance, next_v = floyd_warshall(g)
 
-print("Distance between 1 and 4: ")
+print("### Route")
+print_path(next_v, g.get_vertex(key1), g.get_vertex(key2), INICIO)
+print("")
+print("### Distance:")
 for start in g:
-    if start.get_key() == 1:
+    if start.get_key() == INICIO:
         for end in g:
-            if end.get_key() == 4:
+            if end.get_key() == FIM:
                 if next_v[start][end]:
                     print(distance[start][end])
