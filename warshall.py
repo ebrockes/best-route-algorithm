@@ -7,19 +7,23 @@ class Graph:
         self.vertices = {}
 
     def add_vertex(self, key):
+        """Add a vertex with the given key to the graph."""
         vertex = Vertex(key)
         self.vertices[key] = vertex
  
     def get_vertex(self, key):
+        """Return vertex object with the corresponding key."""
         return self.vertices[key]
  
     def __contains__(self, key):
         return key in self.vertices
  
     def add_edge(self, src_key, dest_key, weight=1):
+        """Add edge from src_key to dest_key with given weight."""
         self.vertices[src_key].add_neighbour(self.vertices[dest_key], weight)
 
     def does_edge_exist(self, src_key, dest_key):
+        """Return True if there is an edge from src_key to dest_key."""
         return self.vertices[src_key].does_it_point_to(self.vertices[dest_key])
  
     def __len__(self):
@@ -27,6 +31,7 @@ class Graph:
  
     def __iter__(self):
         return iter(self.vertices.values())
+ 
  
 class Vertex:
     def __init__(self, key):
@@ -52,7 +57,8 @@ class Vertex:
     def does_it_point_to(self, dest):
         """Return True if this vertex points to dest."""
         return dest in self.points_to
-
+ 
+ 
 def floyd_warshall(g):
     """Return dictionaries distance and next_v.
  
@@ -81,9 +87,11 @@ def floyd_warshall(g):
                 if distance[v][w] > distance[v][p] + distance[p][w]:
                     distance[v][w] = distance[v][p] + distance[p][w]
                     next_v[v][w] = next_v[v][p]
+ 
     return distance, next_v
-    
-def print_path(next_v, u, v, INICIO):
+ 
+ 
+def print_path(next_v, u, v):
     """Print shortest path from vertex u to v.
  
     next_v is a dictionary where next_v[u][v] is the next vertex after vertex u
@@ -93,52 +101,23 @@ def print_path(next_v, u, v, INICIO):
     u and v are Vertex objects.
     """
     p = u
-    print('{} -> '.format(INICIO), end='')
     while (next_v[p][v]):
         print('{} -> '.format(p.get_key()), end='')
         p = next_v[p][v]
     print('{} '.format(v.get_key()), end='')
+ 
 
-print("Distance between 1 and 3: ")
-INICIO = 1
-FIM = 3
-
-matrix = """
-[
-  {
-    "inicio": "1",
-    "fim": "2",
-    "weight": "3"
-  },
-  {
-    "inicio": "1",
-    "fim": "4",
-    "weight": "5"
-  },
-  {
-    "inicio": "2",
-    "fim": "1",
-    "weight": "2"
-  },
-  {
-    "inicio": "2",
-    "fim": "4",
-    "weight": "4"
-  },
-  {
-    "inicio": "3",
-    "fim": "2",
-    "weight": "1"
-  },
-  {
-    "inicio": "4",
-    "fim": "3",
-    "weight": "2"
-  }
-]"""
-
+matrix = None
+with open('json/teste1.json', 'r') as file:
+    matrix = file.read().replace('\n', '')
+ 
 g = Graph()
 x = json.loads(matrix, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+
+INICIO = 1
+FIM = 3
+print('########### Start: ' + str(INICIO))
+print('########### End: ' + str(FIM))
 key1 = key2 = key3 = None
 for i in x:
     key1 = int(i.inicio)
@@ -150,16 +129,22 @@ for i in x:
         g.add_vertex(key2)
     if not g.does_edge_exist(key1, key2):
         g.add_edge(key1, key2, key3)
+    else:
+        print('Edge already exists.')
     
+print('########### executing floyd-warshall')
 distance, next_v = floyd_warshall(g)
 
-print("### Route")
-print_path(next_v, g.get_vertex(key1), g.get_vertex(key2), INICIO)
-print("")
-print("### Distance:")
+print('########### Route:')
 for start in g:
     if start.get_key() == INICIO:
         for end in g:
             if end.get_key() == FIM:
                 if next_v[start][end]:
-                    print(distance[start][end])
+                    print('From {} to {}: '.format(start.get_key(),end.get_key()),end = '')
+                    print_path(next_v, start, end)
+                    print('(distance {})'.format(distance[start][end]))
+
+
+
+

@@ -1,0 +1,32 @@
+[
+  {
+    "inicio": "1",
+    "fim": "2",
+    "weight": "3"
+  },
+  {
+    "inicio": "1",
+    "fim": "4",
+    "weight": "5"
+  },
+  {
+    "inicio": "2",
+    "fim": "1",
+    "weight": "2"
+  },
+  {
+    "inicio": "2",
+    "fim": "4",
+    "weight": "4"
+  },
+  {
+    "inicio": "3",
+    "fim": "2",
+    "weight": "1"
+  },
+  {
+    "inicio": "4",
+    "fim": "3",
+    "weight": "2"
+  }
+]
