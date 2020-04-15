@@ -108,14 +108,14 @@ def print_path(next_v, u, v):
  
 
 matrix = None
-with open('json/teste1.json', 'r') as file:
+with open('json/teste3.json', 'r') as file:
     matrix = file.read().replace('\n', '')
  
 g = Graph()
 x = json.loads(matrix, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
 
 INICIO = 1
-FIM = 3
+FIM = 11
 print('########### Start: ' + str(INICIO))
 print('########### End: ' + str(FIM))
 key1 = key2 = key3 = None
